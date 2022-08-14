@@ -91,3 +91,51 @@ npm install --save typeorm postgresql
 ```
 nest g resource building-site
 ```
+
+## Eliminacion de archivos extra
+- Borraremos el app.controller.sec.ts
+- Borraremos  app.controller.ts
+- Borraremos app.service.ts
+
+## Intervencion en main.ts para setear nuestros pipes
+- Dentro de main.ts agregaremos el siguiente codigo luego de instanciar app
+  	```
+    app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+    }),
+  );
+     ```
+ - Tambien habra que impoart ValidationPipe de @nestjs/common
+
+  ```
+  import {ValidationPipe} from '@nestjs/common';
+  ```
+  - Lo que hace whitelist es : 
+  - Lo que hace forbidNonWhitelisted es : 
+
+### Primeros pasos
+
+  1. Despues de configurar el main.ts tendremos que limpiar algunas secciones del controller
+    1.En el controller debemos agregar ParseUUID en cada instancia donde encontremos el id
+    2. Ademas debemos eliminar el Update$NombreDelModuloDTO que se genera automaticamente ya que este estara dentro del DTO createElement
+    ```
+    Antes 
+    @Get(':id')
+    getById(@Param('id') id: number) {
+      return this.buildingSiteService.findOne(+id);
+  }
+  
+  Despues 
+  @Get(':id')
+  getById(@Param('id', ParseUUIDPipe) id: string) {
+    return this.buildingSiteService.findOne(id);
+  }
+    ```
+  2.Luego de estas modificaciones, comenzaremos a crear nuestra Primera entidad building-site.entity.ts
+  
+  
+  
+
+
