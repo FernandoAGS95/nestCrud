@@ -71,3 +71,23 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](LICENSE).
+
+
+
+# Mini Crud Nest con Cockroach
+
+## dependencias a instalar
+```
+npm install --save @nestjs/swagger
+npm i --save class-validator class-transformer
+npm i --save typeorm
+postgre porque cockroach trabaja en base a el
+npm install --save typeorm postgresql
+```
+ - Utilizaremos typeOrm para conectar nuestro cluster con nuestro crud
+
+## Creacion de modulos 
+  Procedemos a crear el modulo building-site que llevara nuestro crud 
+```
+nest g resource building-site
+```
