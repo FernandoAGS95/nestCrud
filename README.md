@@ -117,25 +117,45 @@ nest g resource building-site
 
 ### Primeros pasos
 
-  1. Despues de configurar el main.ts tendremos que limpiar algunas secciones del controller
-    1.En el controller debemos agregar ParseUUID en cada instancia donde encontremos el id
-    2. Ademas debemos eliminar el Update$NombreDelModuloDTO que se genera automaticamente ya que este estara dentro del DTO createElement
+   1.Despues de configurar el main.ts tendremos que limpiar algunas secciones del controller
+   En el controller debemos agregar ParseUUID en cada instancia donde encontremos el id
+   Ademas debemos eliminar el Update$NombreDelModuloDTO que se genera automaticamente ya que este estara dentro del DTO createElement
+   
     ```
     Antes 
     @Get(':id')
     getById(@Param('id') id: number) {
       return this.buildingSiteService.findOne(+id);
-  }
-  
-  Despues 
-  @Get(':id')
-  getById(@Param('id', ParseUUIDPipe) id: string) {
-    return this.buildingSiteService.findOne(id);
-  }
+    }
+    
+    Despues 
+    @Get(':id')
+    getById(@Param('id', ParseUUIDPipe) id: string) {
+      return this.buildingSiteService.findOne(id);
+     }
     ```
-  2.Luego de estas modificaciones, comenzaremos a crear nuestra Primera entidad building-site.entity.ts
-  
-  
+  2. Luego de estas modificaciones, comenzaremos a crear nuestra Primera entidad building-site.entity.ts
+    - Dentro del Entity declaramos que nuestro  id sera un string y le pondremos el decorador PrimaryGenetaredColumn('uui')
+       De esta forma genera un uui por cada nuevo elemento ingresado de manera automatica
+       
+       ```
+       @PrimaryGeneratedColumn('uui')
+       id:string;
+       ```
+       
+    - El resto de los elementos usaran el decorador @Column  y dependiendo del tipo de variable habra que poner dentro del parametro de column si es varchar, en este         caso agregar el length, en cuanto a los int, solo queda declarar su type.
+    
+       ```
+        @Column({type:'varchar', length:255})
+        direction:string;
+        
+        
+        @Column({type:'int'})
+        telefono:number;
+       ```
+     - 
+    
+ 
   
 
 
