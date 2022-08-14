@@ -116,7 +116,8 @@ nest g resource building-site
   - Lo que hace forbidNonWhitelisted es : 
 
 ### Primeros pasos
-
+ ## Creacion del Entity
+ 
    1.Despues de configurar el main.ts tendremos que limpiar algunas secciones del controller
    En el controller debemos agregar ParseUUID en cada instancia donde encontremos el id
    Ademas debemos eliminar el Update$NombreDelModuloDTO que se genera automaticamente ya que este estara dentro del DTO createElement
@@ -143,7 +144,7 @@ nest g resource building-site
        id:string;
        ```
        
-    - El resto de los elementos usaran el decorador @Column  y dependiendo del tipo de variable habra que poner dentro del parametro de column si es varchar, en este         caso agregar el length, en cuanto a los int, solo queda declarar su type.
+   - El resto de los elementos usaran el decorador @Column  y dependiendo del tipo de variable habra que poner dentro del parametro de column si es varchar, en este         caso agregar el length, en cuanto a los int, solo queda declarar su type.
     
        ```
         @Column({type:'varchar', length:255})
@@ -153,8 +154,20 @@ nest g resource building-site
         @Column({type:'int'})
         telefono:number;
        ```
-     - 
     
+     - Junto estos campos al final agregaremos dos campos extra para saber cuando se creo el elemento y cuando se ha realizado algun update
+    
+      ```
+      @CreateDateColumn({type:'timestamptz,default: ()=> 'CURRENT_TIMESTAMP'})
+      createAt:string;
+      
+      @UpdateDateColumn({type:'timestamptz,default: ()=> 'CURRENT_TIMESTAMP'})
+      updateAt:string;
+      ```
+      
+  ### Trabajando en el DTO
+  
+   3. 
  
   
 
