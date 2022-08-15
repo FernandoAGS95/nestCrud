@@ -1,78 +1,3 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
-
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
-
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
-
-## Description
-
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
-## Installation
-
-```bash
-$ npm install
-```
-
-## Running the app
-
-```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
-```
-
-## Test
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
-
-
 
 # Mini Crud Nest con Cockroach
 
@@ -83,6 +8,10 @@ npm i --save class-validator class-transformer
 npm i --save typeorm
 postgre porque cockroach trabaja en base a el
 npm install --save typeorm postgresql
+npm i --save @nestjs/config
+npm install --save joi
+npm install bcrypt
+npm i -D @types/bcrypts
 ```
  - Utilizaremos typeOrm para conectar nuestro cluster con nuestro crud
 
@@ -167,8 +96,66 @@ nest g resource building-site
       
   ### Trabajando en el DTO
   
-   3. 
+   3. Como anteriormente se ha borrado el updateNombreModuloDto tendremos que crearlo ahora, pero primero declaremos la clase CreateBuildingDto.
+      -  la cual hara uso del class validator para revisar que nuestros strings no esten ''  y que obligadamente sean del tipo que necesitemos que sean. ( No olvidar             importarlos desde class-validator).
+      - **Ambos Dto seran classes y no interfaces para asi tener acceso a las funciones de class-validator
+      - **No se rellenaran todos los campos, pero son los mismos que se ven en el entity
+      ```
+      
+      @IsString()
+      @IsNotEmpty()
+      direccion:string;
+      
+      @IsNumber()
+      numero:number
+      
+      ```
+   4. Una vez creado el DTO para la creacion de elementos, debemos crear la siguiente clase para el update
+    - Como ya tenemos listo el create y este usa los mismos datos que el Update , podemos usar el PartialType, entregando en su argumento la clase CreateBuildingDto
+    - Lo que hace PartialType es anteponer un ? para cada uno de nuestros atributos, haciendo de ellos opcionales, por lo cual contendra las validaciones de numero y que no este vacio pero tambien seran opcionales, en caso de que un usuario altere uno o dos campos, cuya accion no generara un error.
+
+    ```
+      export class UpdateBuildingStDto extends PartialType(CreateBuildingStDto)
+    ```
  
+ ### Antes de continuar con el Service
+   ** En este proyeto estaremos trabajando con la DB cockroach, por lo cual ahora comenzaremos a definir la configuracion y los .env que no se adjuntan en este proyecto, debes hacerlo por tu cuenta
+   
+   1. Crear un .env que contenga los siguientes datos para preparar la conexion a la BD
+       ```
+          DB_PORT=
+          DB_NAME=
+          DB_USER=
+          DB_PASS=
+          DB_NAME=
+          DB_ID=
+       ```
+    
+   2.Una vez Creada el .env procedermos a crear nuestro config.ts dentro del src, el archvio config.ts  sera quien nos indicara los elementos que tenemos que ingresar para poder crear nuestras tablas, agregar filas y definir columnas 
+   
+      ```
+      import { registerAs } from '@nestjs/config';
+
+        export default registerAs('config', () => {
+            return {
+              database: {
+                host: process.env.DB_HOST,
+                port: +process.env.DB_PORT,
+                username: process.env.DB_USER,
+                password: process.env.DB_PASS,
+                database: process.env.DB_NAME,
+                extra: {
+                    options: `--cluster=${process.env.DB_ID}`,
+                },
+            },
+            database2: {},
+            apiKey: process.env.API_KEY,
+            };
+        });
+      ```
+      
+   3.
+   
   
 
 
