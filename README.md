@@ -156,6 +156,33 @@ nest g resource building-site
       
    3.
    
+   
+   
+   
+   
+   
+ # Migracion
+ 
+ Dentro del package.json agregaremos los siguientes scripts para facilitar la ejecucion del codigo
+ 
+     ```
+        "migration:generate":"typeorm-ts-node-commonjs migration:generate -d src/database/dataSource.ts",
+        "migration:run":"typeorm-ts-node-commonjs migration:run -d src/database/dataSource.ts",
+        "migration:revert":"typeorm-ts-node-commonjs migration:revert -d src/database/dataSource.ts",
+        "migration:show":"typeorm-ts-node-commonjs migration:show -d src/database/dataSource.ts",
+     ```
+ Un paso muy importante despues de configurar nuestro package.json es tener nuestro dataSource.ts
+ es que al momento de ejecutar la migracion debemos realizar el siguiente comando en el cmd.
+ 
+    ```
+      npm run migration:generate src/database/migrations/migration
+    ```
+  El hecho de poner este segundo argumento es vital para indicar en donde se va a generar el archvio, el ultimo migration indica el nombre que tendra
+  Una vez realizado este cambio podremos  realizar el siguiente comando
+  
+  ```
+  npm run migration:run
+  ```
   
 
 
